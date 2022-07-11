@@ -48,15 +48,4 @@ namespace mtstatemachine.CourierActivities
             return context.Completed(new {AllocationId= allocationId });
         }
     }
-
-    public interface AllocateInventoryArgument
-    {
-         Guid OrderId { get; }
-         string ItemNumber { get; set; }
-         int Quantity { get; set; }
-    }
-    public interface AllocateInventoryLog
-    {
-        Guid AllocationId { get; set; }
-    }
 }

@@ -56,6 +56,8 @@ namespace mtstatemachine.StateMachines
         public State Submitted { get; set; }
         public State Canceled { get; set; }
         public State Accepted { get; set; }
+        public State Faulted { get; set; }
+
         public Event<OrderSubmitted> OrderSubmitted { get; set; }
         public Event<OrderAccepted> OrderAccepted { get; set; }
         public Event<CustomerAccountClosed> CustomerAccountClosed { get; set; }

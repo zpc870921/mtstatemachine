@@ -17,13 +17,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<AllocateInventoryActivity>();
 
 builder.Services.AddMassTransit(x => {
-    
     var assembly = Assembly.GetExecutingAssembly();
     x.AddConsumers(assembly);
     x.AddActivities(assembly);
     x.SetKebabCaseEndpointNameFormatter();
     x.AddRequestClient<AllocationStatusRequest>();
-    x.AddSagaStateMachine<AllocateStateMachine, AllocationState>().MongoDbRepository(m => {
+    x.AddSagaStateMachine<AllocateStateMachine, AllocationState>(typeof(AllocationStateDefinition)).MongoDbRepository(m => {
         m.DatabaseName = "alloction";
         m.Connection = "mongodb://127.0.0.1";
     });

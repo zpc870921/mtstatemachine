@@ -2,6 +2,6 @@
 {
     public class AlloctionTimeoutExpiration
     {
-        public Guid AlloctionId { get; set; }
+        public Guid AllocationId { get; set; }
     }
 }

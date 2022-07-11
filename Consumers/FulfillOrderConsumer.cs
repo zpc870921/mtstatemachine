@@ -13,6 +13,11 @@ namespace mtstatemachine.Consumers
                 ItemNumber = "item123",
                 Quantity = 10
             });
+            builder.AddActivity("PaymentActiviy", new Uri("queue:payment_execute"), new
+            {
+                Amount =10,
+                CardNumber = "5999-4222-2080"
+            });
             builder.AddVariable("OrderId", orderId);
             await context.Execute(builder.Build());
         }
