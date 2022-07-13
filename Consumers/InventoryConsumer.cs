@@ -7,7 +7,7 @@ namespace mtstatemachine.Consumers
     {
         public async Task Consume(ConsumeContext<AllocateInventory> context)
         {
-            await Task.Delay(500);
+          //  await Task.Delay(500);
 
            // var alloctionId = NewId.NextGuid();
             await context.Publish<AllocationCreated>(new

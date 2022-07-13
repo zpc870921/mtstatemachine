@@ -19,6 +19,7 @@ namespace mtstatemachine.CourierActivities
             var orderid = context.Arguments.OrderId;
             var amount = context.Arguments.Amount;
             var cardnumber = context.Arguments.CardNumber;
+            await Task.Delay(1000);
             if(string.IsNullOrWhiteSpace(cardnumber))
             {
                 throw new ArgumentNullException(nameof(cardnumber));

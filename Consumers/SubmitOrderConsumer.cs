@@ -27,9 +27,10 @@ namespace mtstatemachine.Consumers
 
             await context.Publish<OrderSubmitted>(new
             {
-                OrderId =context.Message.OrderId,
+                OrderId = context.Message.OrderId,
                 Timestamp = context.Message.Timestamp,
-                CustomerNumber = context.Message.CustomerNumber
+                CustomerNumber = context.Message.CustomerNumber,
+                PaymentCardNumber =context.Message.PaymentCardNumber
             });
            if(context.RequestId!=null)
             await context.RespondAsync<SubmitOrderAccepted>(new

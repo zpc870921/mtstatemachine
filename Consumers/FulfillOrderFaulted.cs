@@ -1,10 +1,9 @@
 ﻿namespace mtstatemachine.Consumers
 {
-    public interface SubmitOrder
+    public interface FulfillOrderFaulted
     {
         Guid OrderId { get; }
         DateTime Timestamp { get; }
-        string CustomerNumber { get;  }
-        string PaymentCardNumber { get; }
     }
 }
+

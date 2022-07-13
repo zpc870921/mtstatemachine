@@ -12,7 +12,8 @@ namespace mtstatemachine.StateMachines
         public DateTime? AcceptedDate { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public string CustomerNumber { get; set; }
-        public int Version { get; set; }
+        public string PaymentCardNumber { get; set; }
 
+        public int Version { get; set; }
     }
 }

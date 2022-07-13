@@ -47,15 +47,25 @@ namespace mtstatemachine.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(Guid orderid,string customernumber)
+        public async Task<IActionResult> Post(Guid orderid,string customernumber,string paymentcardnumber)
         {
-            var response = await this.submitOrderRequest.GetResponse<SubmitOrderAccepted>(new
+            var (accepted,rejected) = await this.submitOrderRequest.GetResponse<SubmitOrderAccepted, SubmitOrderRejected>(new
             {
                 OrderId = orderid,
                 Timestamp = InVar.Timestamp,
-                CustomerNumber = customernumber
+                CustomerNumber = customernumber,
+                PaymentCardNumber = paymentcardnumber
             });
-            return Ok(response.Message);
+            if(accepted.IsCompletedSuccessfully)
+            {
+                var response = await accepted;
+                return Ok(response.Message);
+            }
+            else
+            {
+                var response = await rejected;
+                return Ok(response.Message);
+            }
         }
     }
 }

@@ -34,7 +34,9 @@ namespace mtstatemachine.StateMachines
             var endpoint =await consumeContext.GetSendEndpoint(new Uri("queue:fulfill-order"));
             await endpoint.Send<FulfillOrder>(new
             {
-                context.Message.OrderId
+                context.Message.OrderId,
+                PaymentCardNumber = context.Saga.PaymentCardNumber,
+                CustomerNumber = context.Saga.CustomerNumber
             });
             await next.Execute(context).ConfigureAwait(false);
         }

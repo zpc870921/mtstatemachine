@@ -34,18 +34,13 @@ namespace mtstatemachine.StateMachines
                 );
             //DuringAny(When(AllocationStatusRequest).RespondAsync(c => c.Init<AllocationStatusResponse>(new {AllocationId=c.Message.AllocationId,Status=c.Saga.CurrentState })));
 
-            During(Released,
-                When(AllocationCreated).Then(x => {
-                    Console.WriteLine($"allocation was released:{x.Saga.CorrelationId}");
-                }).Finalize());
-            
-
+           
             During(Allocated,
                 When(AllocationCreated)
                 .Schedule(HoldExpiration, context => context.Init<AlloctionTimeoutExpiration>(new { context.Message.AllocationId }), x => x.Message.HoldDuration),
                 When(HoldExpiration.Received)
                 .ThenAsync(async x => {
-                    logger.Log( LogLevel.Information, $"allocation is expired");
+                    logger.Log( LogLevel.Information, $"allocation is expired:{x.Saga.CorrelationId}");
                 }),
                 When(ReleaseRequest)
                 .Unschedule(HoldExpiration)
@@ -53,6 +48,15 @@ namespace mtstatemachine.StateMachines
                     Console.WriteLine($"allocation release request,granted:{x.Saga.CorrelationId}");
                 }).Finalize()
                 );
+            
+
+            During(Released,
+               When(AllocationCreated).Then(x => {
+                   Console.WriteLine($"allocation was released:{x.Saga.CorrelationId}");
+               }).Finalize());
+
+
+            SetCompletedWhenFinalized();
         }
 
         public Schedule<AllocationState, AlloctionTimeoutExpiration> HoldExpiration { get; set; }

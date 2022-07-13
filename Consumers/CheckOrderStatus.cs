@@ -15,4 +15,6 @@
         Guid OrderId { get; set; }
         string State { get; set; }
     }
+
+    
 }

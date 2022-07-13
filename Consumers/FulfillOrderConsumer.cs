@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using MassTransit.Courier.Contracts;
 
 namespace mtstatemachine.Consumers
 {
@@ -16,9 +17,15 @@ namespace mtstatemachine.Consumers
             builder.AddActivity("PaymentActiviy", new Uri("queue:payment_execute"), new
             {
                 Amount =10,
-                CardNumber = "5999-4222-2080"
+                CardNumber =context.Message.PaymentCardNumber?? "5999-4222-2080"
             });
             builder.AddVariable("OrderId", orderId);
+            await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Faulted| RoutingSlipEvents.Supplemental, MassTransit.Courier.Contracts.RoutingSlipEventContents.None, endpoint =>
+                endpoint.Send<FulfillOrderFaulted>(new { context.Message.OrderId })
+            );
+            await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed | RoutingSlipEvents.Supplemental, MassTransit.Courier.Contracts.RoutingSlipEventContents.None, endpoint =>
+                 endpoint.Send<FulfillOrderCompleted>(new { context.Message.OrderId })
+            );
             await context.Execute(builder.Build());
         }
     }

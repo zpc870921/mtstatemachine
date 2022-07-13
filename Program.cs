@@ -19,6 +19,7 @@ builder.Services.AddScoped<AllocateInventoryActivity>();
 builder.Services.AddMassTransit(x => {
     var assembly = Assembly.GetExecutingAssembly();
     x.AddConsumers(assembly);
+    x.AddConsumersFromNamespaceContaining<RoutingslipEventConsumer>();
     x.AddActivities(assembly);
     x.SetKebabCaseEndpointNameFormatter();
     x.AddRequestClient<AllocationStatusRequest>();
@@ -37,7 +38,8 @@ builder.Services.AddMassTransit(x => {
     x.AddRequestClient<AllocateInventory>();
 
     x.UsingRabbitMq((ctx, cfg) => {
-        cfg.UseDelayedMessageScheduler();
+        // cfg.UseDelayedMessageScheduler();
+        cfg.UseMessageScheduler(new Uri("queue:quartz-scheduler"));
         cfg.ConfigureEndpoints(ctx);
     });
 })

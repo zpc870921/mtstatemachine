@@ -24,7 +24,7 @@ namespace mtstatemachine.Consumers
         {
             if (this.logger.IsEnabled(LogLevel.Information))
             {
-                this.logger.Log(LogLevel.Information, "routingslipcompleted:{ActivityName}", context.Message.ActivityName);
+                this.logger.Log(LogLevel.Information, "RoutingSlipActivityCompleted:{ActivityName},trackingnumber:{TrackingNumber}", context.Message.ActivityName,context.Message.TrackingNumber);
             }
             return Task.CompletedTask;
         }
@@ -33,7 +33,7 @@ namespace mtstatemachine.Consumers
         {
             if (this.logger.IsEnabled(LogLevel.Information))
             {
-                this.logger.Log(LogLevel.Information, "routingslipcompleted:{TrackingNumber},{ExceptionInfo}", context.Message.TrackingNumber,context.Message.ActivityExceptions.FirstOrDefault());
+                this.logger.Log(LogLevel.Information, "RoutingSlipFaulted:{TrackingNumber},{ExceptionInfo}", context.Message.TrackingNumber,context.Message.ActivityExceptions.FirstOrDefault());
             }
             return Task.CompletedTask;
         }
