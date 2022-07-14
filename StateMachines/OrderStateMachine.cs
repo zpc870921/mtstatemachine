@@ -11,6 +11,7 @@ namespace mtstatemachine.StateMachines
             
             Event(()=>OrderSubmitted,x=>x.CorrelateById(m=>m.Message.OrderId));
             Event(()=>FulfillOrderFaulted, x=>x.CorrelateById(m=>m.Message.OrderId));
+            Event(()=> FulfillmentOrderFaulted, x=>x.CorrelateById(m=>m.Message.Message.OrderId));
             Event(()=> FulfillOrderCompleted, x=>x.CorrelateById(m=>m.Message.OrderId));
             Event(()=> OrderAccepted, x=>x.CorrelateById(m=>m.Message.OrderId));
             Event(()=> CustomerAccountClosed, x => x.CorrelateBy((saga, context) =>
@@ -48,7 +49,11 @@ namespace mtstatemachine.StateMachines
                 When(FulfillOrderFaulted)
                 .TransitionTo(Faulted),
             When(FulfillOrderCompleted)
-                .TransitionTo(Completed));
+                .TransitionTo(Completed),
+            When(FulfillmentOrderFaulted)
+            .Then(context=>Console.WriteLine($"fulfillmentorder fault:{context.Message.Exceptions.FirstOrDefault()?.Message}")).TransitionTo(Faulted)
+                )
+                ;
 
             DuringAny(When(OrderSubmitted)
                 .Then(x => {
@@ -73,6 +78,7 @@ namespace mtstatemachine.StateMachines
         public Event<CustomerAccountClosed> CustomerAccountClosed { get; set; }
         public Event<CheckOrderRequest> CheckOrderRequest { get; set; }
         public Event<FulfillOrderFaulted> FulfillOrderFaulted { get; set; }
+        public Event<Fault<FulfillOrder>> FulfillmentOrderFaulted { get; set; }
         public Event<FulfillOrderCompleted> FulfillOrderCompleted { get; set; }
        
     }

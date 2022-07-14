@@ -7,6 +7,15 @@ namespace mtstatemachine.Consumers
     {
         public async Task Consume(ConsumeContext<FulfillOrder> context)
         {
+            if(context.Message.CustomerNumber.StartsWith("invlid"))
+            {
+                throw new InvalidOperationException("we tried,but the customer is invalid");
+            }
+            if (context.Message.CustomerNumber.StartsWith("maybe"))
+            {
+                if(new Random().Next(100)>10)
+                    throw new ApplicationException("we tried,but the customer is maybe");
+            }
             var orderId = context.Message.OrderId;
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
             builder.AddActivity("AllocateInventory", new Uri("queue:allocate-inventory_execute"), new
