@@ -1,5 +1,8 @@
+
 using MassTransit;
+using MassTransit.Courier.Contracts;
 using mtstatemachine;
+using mtstatemachine.BatchConsumers;
 using mtstatemachine.Consumers;
 using mtstatemachine.CourierActivities;
 using mtstatemachine.StateMachines;
@@ -14,12 +17,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<AllocateInventoryActivity>();
 
+//MessageDataDefaults.TimeToLive = TimeSpan.FromDays(2);
+
+builder.Services.AddScoped<AllocateInventoryActivity>();
 builder.Services.AddMassTransit(x => {
+    
+
     var assembly = Assembly.GetExecutingAssembly();
     x.AddConsumers(assembly);
-    x.AddConsumersFromNamespaceContaining<RoutingslipEventConsumer>();
+    //x.AddConsumersFromNamespaceContaining<RoutingslipEventConsumer>();
     x.AddActivities(assembly);
     x.SetKebabCaseEndpointNameFormatter();
     x.AddRequestClient<AllocationStatusRequest>();
@@ -38,8 +45,23 @@ builder.Services.AddMassTransit(x => {
     x.AddRequestClient<AllocateInventory>();
 
     x.UsingRabbitMq((ctx, cfg) => {
+        //cfg.UseMessageData();
+
         // cfg.UseDelayedMessageScheduler();
         cfg.UseMessageScheduler(new Uri("queue:quartz-scheduler"));
+
+        //cfg.ReceiveEndpoint(KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipBatchEventConsumer>(), e =>
+        //{
+        //    e.PrefetchCount = 20;
+        //    e.Batch<RoutingSlipCompleted>(b =>
+        //    {
+        //        b.TimeLimit = TimeSpan.FromSeconds(5);
+        //        b.MessageLimit = 10;
+
+        //        b.Consumer<RoutingSlipBatchEventConsumer, RoutingSlipCompleted>(ctx);
+        //    });
+        //});
+
         cfg.ConfigureEndpoints(ctx);
     });
 })

@@ -3,7 +3,7 @@ using MassTransit.Courier.Contracts;
 
 namespace mtstatemachine.Consumers
 {
-    public class RoutingslipEventConsumer : IConsumer<RoutingSlipCompleted>,IConsumer<RoutingSlipActivityCompleted>,IConsumer<RoutingSlipFaulted>
+    public class RoutingslipEventConsumer : IConsumer<RoutingSlipActivityCompleted>,IConsumer<RoutingSlipFaulted>
     {
         private readonly ILogger<RoutingslipEventConsumer> logger;
 
@@ -11,14 +11,7 @@ namespace mtstatemachine.Consumers
         {
             this.logger = logger;
         }
-        public Task Consume(ConsumeContext<RoutingSlipCompleted> context)
-        {
-            if(this.logger.IsEnabled(LogLevel.Information))
-            {
-                this.logger.Log(LogLevel.Information,"routingslipcompleted:{TrackingNumber}",context.Message.TrackingNumber);
-            }
-            return Task.CompletedTask;
-        }
+      
 
         public Task Consume(ConsumeContext<RoutingSlipActivityCompleted> context)
         {
