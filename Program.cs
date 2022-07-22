@@ -1,6 +1,7 @@
 
 using MassTransit;
 using MassTransit.Courier.Contracts;
+using Microsoft.EntityFrameworkCore;
 using mtstatemachine;
 using mtstatemachine.BatchConsumers;
 using mtstatemachine.Consumers;
@@ -21,9 +22,8 @@ builder.Services.AddSwaggerGen();
 //MessageDataDefaults.TimeToLive = TimeSpan.FromDays(2);
 
 builder.Services.AddScoped<AllocateInventoryActivity>();
+builder.Services.AddScoped(typeof(IMessageValidator<>),typeof(MessageValidator<>));
 builder.Services.AddMassTransit(x => {
-    
-
     var assembly = Assembly.GetExecutingAssembly();
     x.AddConsumers(assembly);
     //x.AddConsumersFromNamespaceContaining<RoutingslipEventConsumer>();
@@ -47,8 +47,9 @@ builder.Services.AddMassTransit(x => {
     x.UsingRabbitMq((ctx, cfg) => {
         //cfg.UseMessageData();
 
-        // cfg.UseDelayedMessageScheduler();
-        cfg.UseMessageScheduler(new Uri("queue:quartz-scheduler"));
+         cfg.UseDelayedMessageScheduler();
+        //cfg.UseMessageScheduler(new Uri("queue:quartz-scheduler"));
+        
 
         //cfg.ReceiveEndpoint(KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipBatchEventConsumer>(), e =>
         //{
@@ -62,7 +63,17 @@ builder.Services.AddMassTransit(x => {
         //    });
         //});
 
-        cfg.ConfigureEndpoints(ctx);
+        cfg.ServiceInstance(instance => {
+            instance.ConfigureJobServiceEndpoints(js => {
+
+                //var dbcontext= new JobServiceSagaDbContextFactory().CreateDbContext(DbContextOptionsBuilder)
+
+                //js.UseEntityFrameworkCoreSagaRepository(() => new MassTransit.EntityFrameworkCoreIntegration.JobServiceSagaDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<MassTransit.EntityFrameworkCoreIntegration.JobServiceSagaDbContext>()));
+            });
+            instance.ConfigureEndpoints(ctx);
+        });
+
+        //cfg.ConfigureEndpoints(ctx);
     });
 })
     .AddScoped<OrderAcceptedActivity>()
